@@ -1,6 +1,6 @@
 # soibot — Soi bot tín hiệu chứng khoán
 
-> **Hook Reel:** “Bot báo thắng 65%? VN-Index nằm im cũng thắng 80%. Soi thử 20 giây là biết.”
+> **Hook Reel:** “Bot báo thắng 57%, lãi 14%? So với chỉ số cùng lúc (+42%) mới biết có giỏi thật không (ví dụ với bot mẫu tự tạo, dữ liệu giả lập).”
 
 `soibot` là công cụ dòng lệnh (Python) **chấm điểm bot/nhóm phát tín hiệu chứng khoán** bằng backtest
 trên giá lịch sử thật, và quan trọng nhất: **so với VN-Index trong đúng những khung thời gian đó**.
@@ -8,7 +8,9 @@ Nếu tỷ lệ thắng cao chỉ vì thị trường đang lên, soibot sẽ c�
 
 ⚠️ **Không phải khuyến nghị đầu tư.** Kết quả quá khứ không đảm bảo tương lai. Công cụ không hứa hẹn lợi nhuận.
 
-![Báo cáo mẫu](docs/bot_may_man.png)
+![Báo cáo mẫu (dữ liệu giả lập)](docs/bot_may_man.png)
+
+*Ảnh trên dùng DỮ LIỆU GIẢ LẬP, không phải giá thật.*
 
 ## Cài đặt
 
@@ -17,17 +19,22 @@ git clone https://github.com/vietphan98/soibot && cd soibot
 pip install -e .          # hoặc: pip install pandas numpy requests
 ```
 
-## Demo 20–30 giây
+## Demo 20–30 giây (không cần mạng)
+
+Hai bot mẫu trong `samples/` là **bot tự tạo**, chạy trên **DỮ LIỆU GIẢ LẬP, không phải giá thật**
+(chỉ số giả `GLINDEX` có xu hướng tăng và 12 mã giả `GL01`…`GL12`, sinh bằng seed cố định trong `soibot/synthetic.py`):
 
 ```bash
-python -m soibot samples/bot_may_man.csv --hold 15        # bot "may mắn nhờ sóng tăng" → hiện CẢNH BÁO
-python -m soibot samples/bot_dong_luong.json --hold 20    # bot động lượng → alpha dương, nhưng chưa đủ ý nghĩa thống kê
-# Không có mạng? Dùng dữ liệu mẫu offline:
-python -m soibot samples/bot_may_man.csv --hold 15 --source offline
+python -m soibot samples/bot_may_man.csv --hold 15 --source gialap      # bot mua ngẫu nhiên trong thị trường giả đang tăng → CẢNH BÁO
+python -m soibot samples/bot_dong_luong.json --hold 20 --source gialap  # bot động lượng: alpha dương nhưng chưa đủ ý nghĩa thống kê
 ```
 
-Mỗi lệnh in báo cáo ra terminal và tạo file `<tên>_report.html` (tự chứa, mở bằng trình duyệt,
-có biểu đồ đường vốn bot so với chỉ số). Ảnh mẫu: `docs/bot_may_man.png`, `docs/bot_dong_luong.png`.
+Kết quả demo: bot may mắn thắng 56,8% số lệnh, lãi +14,3%, nhưng chỉ số giả cùng khung thắng 73% và lãi +41,9%
+(alpha −1,59%/lệnh) → cảnh báo. Bot động lượng: alpha +1,71%/lệnh nhưng t = 1,30 → vẫn cảnh báo vì chưa có ý nghĩa thống kê.
+
+Mỗi lệnh in báo cáo ra terminal và tạo file `<tên>_report.html` (tự chứa, có biểu đồ đường vốn so với chỉ số;
+khi dùng dữ liệu giả lập có băng rôn “DỮ LIỆU GIẢ LẬP, không phải giá thật”). Với tín hiệu thật, bỏ `--source gialap`
+để tải giá thật về cache máy bạn.
 
 ## Định dạng tín hiệu
 
@@ -52,12 +59,15 @@ JSON: một mảng như trên, hoặc `{"signals": [ ... ]}`. Giá target/stop t
 
 ## Nguồn dữ liệu
 
-1. **VNDirect** (API công khai `api-finfo.vndirect.com.vn`, giá cổ phiếu đã điều chỉnh, chỉ số VNINDEX/VN30/HNXINDEX) — nguồn chính, đã chạy được.
-2. **Yahoo Finance** (`<MÃ>.VN`) — dự phòng khi VNDirect lỗi; đã chạy được cho cổ phiếu, *không* có lịch sử VN-Index.
-3. **Dữ liệu mẫu offline** trong `samples/offline_prices/` (VN-Index + 20 mã, 12/2024–01/2026) — **chỉ để demo**, ghi rõ “DỮ LIỆU MẪU OFFLINE” trong báo cáo.
+1. **VNDirect** (API công khai `api-finfo.vndirect.com.vn`, giá cổ phiếu đã điều chỉnh; chỉ số VNINDEX/VN30/HNXINDEX…) — nguồn chính.
+2. **Yahoo Finance** (`<MÃ>.VN`) — dự phòng cho **cổ phiếu**. Yahoo **không có lịch sử VN-Index**, nên chỉ số so sánh
+   **luôn lấy từ VNDirect**, kể cả khi dùng `--source yahoo`. Nếu VNDirect không truy cập được, soibot báo lỗi rõ bằng tiếng Việt.
+3. **`--source gialap`** — **DỮ LIỆU GIẢ LẬP, không phải giá thật**, sinh lúc chạy, chỉ để demo/test.
 
-Giá được cache ở `~/.cache/soibot` (đổi bằng biến `SOIBOT_CACHE`; bỏ cache: `--no-cache`).
+Giá thật **không đi kèm repo**; chúng chỉ được tải về cache trên máy bạn (`~/.cache/soibot`, đổi bằng `SOIBOT_CACHE`; bỏ cache: `--no-cache`).
 API miễn phí có thể đổi hoặc ngừng bất cứ lúc nào.
+
+Dữ liệu giá © VNDirect và Yahoo Finance, chỉ dùng cá nhân/phi thương mại, soibot không liên kết với các đơn vị này.
 
 ## Các chỉ số
 
@@ -79,8 +89,8 @@ không thấp hơn của bot quá 10 điểm %, alpha trung bình ≤ 0, hoặc 
 
 ```bash
 export TELEGRAM_BOT_TOKEN=... TELEGRAM_CHAT_ID=...
-python -m soibot samples/bot_may_man.csv --telegram            # gửi thật
-python -m soibot samples/bot_may_man.csv --telegram-dry-run    # chỉ in nội dung
+python -m soibot samples/bot_may_man.csv --source gialap --telegram            # gửi thật
+python -m soibot samples/bot_may_man.csv --source gialap --telegram-dry-run    # chỉ in nội dung, không cần token
 ```
 
 ## Kiểm thử
@@ -89,8 +99,7 @@ python -m soibot samples/bot_may_man.csv --telegram-dry-run    # chỉ in nội 
 pip install pytest && python -m pytest -q
 ```
 
-Mẫu `samples/` được sinh tất định bằng `scripts/make_samples.py` (bot may mắn: mua ngẫu nhiên mã VN30 trong sóng tăng 2025;
-bot động lượng: mua mã mạnh nhất so với VN-Index, không nhìn trước tương lai).
+Mẫu `samples/` được sinh tất định bằng `scripts/make_samples.py` trên dữ liệu giả lập.
 
 ## Tác giả & giấy phép
 

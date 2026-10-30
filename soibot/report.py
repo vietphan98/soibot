@@ -32,6 +32,8 @@ def terminal(rep, meta, trades) -> str:
     b = meta["bench"]
     L = []
     L.append("=" * 72)
+    if "GIẢ LẬP" in meta["sources"]:
+        L.append(" !!! DỮ LIỆU GIẢ LẬP, không phải giá thật — chỉ để demo !!!")
     L.append(f" SOIBOT — chấm điểm bot: {meta['name']}")
     L.append(f" Giai đoạn: {meta['start']} → {meta['end']} | Benchmark: {b} | Nguồn giá: {meta['sources']}")
     L.append(f" Quy tắc: {meta['rules']}")
@@ -107,10 +109,12 @@ body{{font-family:"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;max-width:820px
 h1{{font-size:22px;margin:0}} .mut{{color:#868e96;font-size:13px}}
 .verdict{{padding:12px 14px;border-radius:8px;font-weight:700;margin:14px 0}}
 .good{{background:#d3f9d8;color:#2b8a3e}} .bad{{background:#ffe3e3;color:#c92a2a}} .mid{{background:#fff3bf;color:#8a6d00}}
+.fake{{background:#343a40;color:#ffd43b;font-weight:700;text-align:center;padding:8px;border-radius:6px;margin-bottom:12px}}
 .warn{{background:#fff5f5;border-left:4px solid #e03131;padding:8px 12px;margin:8px 0;font-size:14px}}
 table{{border-collapse:collapse;width:100%;font-size:14px;margin:10px 0}} td,th{{border-bottom:1px solid #eee;padding:5px 8px;text-align:right}}
 td:first-child,th:first-child{{text-align:left}} th{{background:#f8f9fa}}
 </style></head><body>
+{'<div class="fake">DỮ LIỆU GIẢ LẬP, không phải giá thật — chỉ để demo</div>' if 'GIẢ LẬP' in meta['sources'] else ''}
 <h1>soibot · Chấm điểm bot “{e(meta['name'])}”</h1>
 <p class="mut">{e(meta['start'])} → {e(meta['end'])} · Benchmark: {b} · Nguồn giá: {e(meta['sources'])}<br>Quy tắc: {e(meta['rules'])}</p>
 <div class="verdict {good}">Kết luận: {e(rep.verdict)}</div>{warn}

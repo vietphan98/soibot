@@ -9,7 +9,8 @@ import pandas as pd
 
 from . import __version__
 from .backtest import Rules, simulate
-from .data import get_prices
+from .data import INDEXES, get_prices
+from .synthetic import INDEX as GL_INDEX, LABEL as GL_LABEL
 from .metrics import daily_curves, evaluate
 from .report import html_report, telegram_text, terminal
 from .signals import load_signals
@@ -26,8 +27,9 @@ def build_parser():
     p.add_argument("--no-opposite", action="store_true", help="không thoát khi có tín hiệu ngược chiều")
     p.add_argument("--short", action="store_true", help="cho phép 'sell' mở vị thế bán khống")
     p.add_argument("--fee", type=float, default=0.0025, help="phí + thuế khứ hồi mỗi lệnh, tỷ lệ [0.0025]")
-    p.add_argument("--source", choices=["auto", "vndirect", "yahoo", "offline"], default="auto",
-                   help="nguồn giá: auto = VNDirect → Yahoo → dữ liệu mẫu offline [auto]")
+    p.add_argument("--source", choices=["auto", "vndirect", "yahoo", "gialap"], default="auto",
+                   help="nguồn giá: auto = VNDirect → Yahoo; yahoo = cổ phiếu từ Yahoo, chỉ số từ VNDirect; "
+                        "gialap = DỮ LIỆU GIẢ LẬP để demo offline [auto]")
     p.add_argument("--no-cache", action="store_true", help="không dùng cache giá")
     p.add_argument("--html", default=None, help="đường dẫn file HTML báo cáo (mặc định: <tên>_report.html)")
     p.add_argument("--name", default=None, help="tên bot hiển thị")
@@ -46,10 +48,20 @@ def main(argv=None):
     start = (sig["date"].min() - pd.Timedelta(days=10)).strftime("%Y-%m-%d")
     end = (sig["date"].max() + pd.Timedelta(days=int(a.hold * 1.6) + 15)).strftime("%Y-%m-%d")
     end = min(end, pd.Timestamp.today().strftime("%Y-%m-%d"))
-    srcs = {"auto": ("vndirect", "yahoo", "offline"), "vndirect": ("vndirect",),
-            "yahoo": ("yahoo",), "offline": ("offline",)}[a.source]
+    srcs = {"auto": ("vndirect", "yahoo"), "vndirect": ("vndirect",),
+            "yahoo": ("yahoo",), "gialap": ("gialap",)}[a.source]
+    bname = a.bench.upper()
+    if a.source == "gialap" and bname == "VNINDEX":
+        bname = GL_INDEX  # chỉ số giả lập thay cho VN-Index
+    bsrcs = srcs
+    if bname in INDEXES and a.source in ("auto", "yahoo"):
+        bsrcs = ("vndirect",)  # Yahoo không có lịch sử chỉ số VN -> luôn lấy chỉ số từ VNDirect
     used = {}
-    bench, used[a.bench.upper()] = get_prices(a.bench.upper(), start, end, srcs, not a.no_cache)
+    try:
+        bench, used[bname] = get_prices(bname, start, end, bsrcs, not a.no_cache)
+    except RuntimeError as e:
+        sys.exit(f"Lỗi: không tải được chỉ số {bname} ({e}). Yahoo Finance không có lịch sử chỉ số VN, "
+                 "nên chỉ số luôn lấy từ VNDirect. Không có mạng? Thử demo với --source gialap.")
     prices = {}
     notes = []
     for s in sig["symbol"].unique():
@@ -64,12 +76,12 @@ def main(argv=None):
     curves = daily_curves(trades, prices, bench, rules.fee)
     rep = evaluate(trades, curves)
     src_summary = ", ".join(sorted({v.replace(" (cache)", "") for v in used.values()}))
-    if "offline" in src_summary:
-        src_summary += " (DỮ LIỆU MẪU OFFLINE)"
+    if "gialap" in src_summary:
+        src_summary += f" — {GL_LABEL.upper()}"
     rule_txt = (f"giữ tối đa {rules.hold_days} phiên; target {'bật' if rules.use_target else 'tắt'}; "
                 f"stop {'bật' if rules.use_stop else 'tắt'}; tín hiệu ngược {'bật' if rules.opposite_exit else 'tắt'}; "
                 f"bán khống {'bật' if rules.allow_short else 'tắt'}; phí khứ hồi {rules.fee:.2%}")
-    meta = {"name": a.name or Path(a.signals).stem, "bench": a.bench.upper(), "sources": src_summary,
+    meta = {"name": a.name or Path(a.signals).stem, "bench": bname, "sources": src_summary,
             "start": str(sig['date'].min().date()), "end": str(curves.index.max().date()) if len(curves) else end,
             "rules": rule_txt, "notes": notes}
     print(terminal(rep, meta, trades))

@@ -9,5 +9,6 @@ soibot không chép mã của dự án khác; chỉ dùng các thư viện sau l
 | requests | Apache-2.0 | gọi API giá |
 | pytest (chỉ khi test) | MIT | kiểm thử |
 
-Dữ liệu giá thuộc quyền của nhà cung cấp gốc (VNDirect, Yahoo Finance). Bộ giá mẫu offline trong
-`samples/offline_prices/` chỉ để chạy demo, không phân phối lại cho mục đích thương mại.
+Dữ liệu giá © VNDirect và Yahoo Finance, chỉ dùng cá nhân/phi thương mại; soibot không liên kết với các đơn vị này.
+Repo **không** phân phối lại giá thật: giá chỉ được tải về cache trên máy người dùng. Dữ liệu demo trong repo
+(`--source gialap`, `soibot/synthetic.py`) là **DỮ LIỆU GIẢ LẬP, không phải giá thật**.

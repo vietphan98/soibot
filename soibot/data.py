@@ -1,6 +1,8 @@
 """Tải giá lịch sử ngày (đã điều chỉnh) từ nguồn miễn phí, có cache cục bộ.
 
-Thứ tự nguồn: VNDirect (finfo API) -> Yahoo Finance (<MÃ>.VN) -> dữ liệu mẫu offline.
+Thứ tự nguồn: VNDirect (finfo API) -> Yahoo Finance (<MÃ>.VN, không có lịch sử chỉ số).
+Giá thật chỉ được tải về cache cục bộ của người dùng, không đi kèm repo.
+Nguồn "gialap" là DỮ LIỆU GIẢ LẬP (soibot/synthetic.py), không phải giá thật.
 """
 from __future__ import annotations
 
@@ -13,8 +15,6 @@ import requests
 
 UA = {"User-Agent": "Mozilla/5.0 (soibot)"}
 INDEXES = {"VNINDEX", "VN30", "HNXINDEX", "HNX30", "UPCOMINDEX", "VN100"}
-PKG_DIR = Path(__file__).resolve().parent
-OFFLINE_DIR = PKG_DIR.parent / "samples" / "offline_prices"
 
 
 def cache_dir() -> Path:
@@ -43,7 +43,9 @@ def _vndirect(symbol: str, start: str, end: str) -> pd.DataFrame:
 
 
 def _yahoo(symbol: str, start: str, end: str) -> pd.DataFrame:
-    ysym = "^VNINDEX.VN" if symbol == "VNINDEX" else f"{symbol}.VN"
+    if symbol in INDEXES:
+        raise ValueError("Yahoo Finance không có lịch sử chỉ số Việt Nam (VNINDEX, VN30…)")
+    ysym = f"{symbol}.VN"
     p1 = int(dt.datetime.fromisoformat(start).timestamp())
     p2 = int((dt.datetime.fromisoformat(end) + dt.timedelta(days=1)).timestamp())
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ysym}"
@@ -66,14 +68,12 @@ def _yahoo(symbol: str, start: str, end: str) -> pd.DataFrame:
     return df[["date", "open", "high", "low", "close"]]
 
 
-def _offline(symbol: str, start: str, end: str) -> pd.DataFrame:
-    f = OFFLINE_DIR / f"{symbol}.csv"
-    if not f.exists():
-        raise FileNotFoundError(f"không có dữ liệu mẫu offline cho {symbol}")
-    return pd.read_csv(f, dtype={"date": str})
+def _gialap(symbol: str, start: str, end: str) -> pd.DataFrame:
+    from .synthetic import prices
+    return prices(symbol)
 
 
-SOURCES = {"vndirect": _vndirect, "yahoo": _yahoo, "offline": _offline}
+SOURCES = {"vndirect": _vndirect, "yahoo": _yahoo, "gialap": _gialap}
 
 
 def _clean(df: pd.DataFrame, start: str, end: str) -> pd.DataFrame:
@@ -91,13 +91,13 @@ def get_prices(symbol: str, start: str, end: str, sources=("vndirect", "yahoo"),
     errors = []
     for src in sources:
         cf = cache_dir() / f"{src}_{symbol}_{start}_{end}.csv"
-        if use_cache and src != "offline" and cf.exists():
+        if use_cache and src != "gialap" and cf.exists():
             return _clean(pd.read_csv(cf), start, end), f"{src} (cache)"
         try:
             df = SOURCES[src](symbol, start, end)
             if df.empty:
                 raise ValueError("rỗng")
-            if src != "offline":
+            if src != "gialap":
                 df.to_csv(cf, index=False)
             out = _clean(df, start, end)
             if out.empty:
