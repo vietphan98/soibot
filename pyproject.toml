@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "soibot"
+version = "0.1.0"
+description = "Chấm điểm bot tín hiệu chứng khoán Việt Nam bằng backtest và so với VN-Index"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Việt Phan"}]
+requires-python = ">=3.9"
+dependencies = ["pandas>=1.5", "numpy>=1.23", "requests>=2.28"]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+soibot = "soibot.cli:main"
+
+[tool.setuptools]
+packages = ["soibot"]

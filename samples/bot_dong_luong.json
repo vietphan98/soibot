@@ -1,0 +1,270 @@
+{
+ "bot": "dong_luong",
+ "signals": [
+  {
+   "symbol": "PLX",
+   "date": "2025-03-03",
+   "side": "buy"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-03-03",
+   "side": "buy"
+  },
+  {
+   "symbol": "PLX",
+   "date": "2025-03-10",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-03-10",
+   "side": "buy"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-04-08",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-04-08",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-05-16",
+   "side": "buy"
+  },
+  {
+   "symbol": "TCB",
+   "date": "2025-05-16",
+   "side": "buy"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-05-30",
+   "side": "buy"
+  },
+  {
+   "symbol": "STB",
+   "date": "2025-06-13",
+   "side": "buy"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-06-20",
+   "side": "sell"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-06-20",
+   "side": "sell"
+  },
+  {
+   "symbol": "PLX",
+   "date": "2025-06-20",
+   "side": "buy"
+  },
+  {
+   "symbol": "MSN",
+   "date": "2025-06-27",
+   "side": "buy"
+  },
+  {
+   "symbol": "PLX",
+   "date": "2025-07-04",
+   "side": "sell"
+  },
+  {
+   "symbol": "TCB",
+   "date": "2025-07-11",
+   "side": "sell"
+  },
+  {
+   "symbol": "STB",
+   "date": "2025-07-11",
+   "side": "sell"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-07-11",
+   "side": "buy"
+  },
+  {
+   "symbol": "SSI",
+   "date": "2025-07-11",
+   "side": "buy"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-07-18",
+   "side": "buy"
+  },
+  {
+   "symbol": "MSN",
+   "date": "2025-07-25",
+   "side": "sell"
+  },
+  {
+   "symbol": "VPB",
+   "date": "2025-07-25",
+   "side": "buy"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-08-08",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-08-08",
+   "side": "sell"
+  },
+  {
+   "symbol": "MBB",
+   "date": "2025-08-15",
+   "side": "buy"
+  },
+  {
+   "symbol": "SSI",
+   "date": "2025-08-22",
+   "side": "sell"
+  },
+  {
+   "symbol": "SSI",
+   "date": "2025-09-09",
+   "side": "buy"
+  },
+  {
+   "symbol": "VPB",
+   "date": "2025-09-16",
+   "side": "sell"
+  },
+  {
+   "symbol": "MBB",
+   "date": "2025-09-16",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-09-16",
+   "side": "buy"
+  },
+  {
+   "symbol": "MWG",
+   "date": "2025-09-16",
+   "side": "buy"
+  },
+  {
+   "symbol": "SSI",
+   "date": "2025-09-30",
+   "side": "sell"
+  },
+  {
+   "symbol": "HPG",
+   "date": "2025-09-30",
+   "side": "buy"
+  },
+  {
+   "symbol": "HPG",
+   "date": "2025-10-07",
+   "side": "sell"
+  },
+  {
+   "symbol": "STB",
+   "date": "2025-10-07",
+   "side": "buy"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-10-14",
+   "side": "buy"
+  },
+  {
+   "symbol": "STB",
+   "date": "2025-10-21",
+   "side": "sell"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-10-21",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-10-21",
+   "side": "sell"
+  },
+  {
+   "symbol": "MWG",
+   "date": "2025-10-21",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-10-28",
+   "side": "buy"
+  },
+  {
+   "symbol": "FPT",
+   "date": "2025-10-28",
+   "side": "buy"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-11-04",
+   "side": "sell"
+  },
+  {
+   "symbol": "FPT",
+   "date": "2025-11-04",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-12-02",
+   "side": "buy"
+  },
+  {
+   "symbol": "VNM",
+   "date": "2025-12-02",
+   "side": "buy"
+  },
+  {
+   "symbol": "VNM",
+   "date": "2025-12-09",
+   "side": "sell"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-12-09",
+   "side": "buy"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-12-16",
+   "side": "sell"
+  },
+  {
+   "symbol": "VHM",
+   "date": "2025-12-16",
+   "side": "sell"
+  },
+  {
+   "symbol": "VIC",
+   "date": "2025-12-23",
+   "side": "buy"
+  },
+  {
+   "symbol": "HDB",
+   "date": "2025-12-23",
+   "side": "buy"
+  },
+  {
+   "symbol": "STB",
+   "date": "2025-12-30",
+   "side": "buy"
+  }
+ ]
+}
